@@ -5,22 +5,23 @@ RUN apk update
 RUN apk upgrade
 RUN apk add --no-cache alpine-sdk cmake
 
-# Clone GPIO library
-RUN git clone -b v79 --single-branch https://github.com/joan2937/pigpio.git
+WORKDIR /pi-drone-flight-computer
 
-WORKDIR /pigpio
+# Copy project dependencies
+COPY external external/
 
-# Fix for compiling on alpine, https://github.com/joan2937/pigpio/issues/107
+WORKDIR /pi-drone-flight-computer/external/pigpio
+
+# Fix for compiling pigpio on Linux Alpine, https://github.com/joan2937/pigpio/issues/107
 RUN sed -i -e 's/ldconfig/echo ldconfig disabled/g' Makefile
 
-# Build GPIO library
+# Build pigpio GPIO library
 RUN make
 RUN make install
 
 WORKDIR /pi-drone-flight-computer
 
-# Copy project source and dependencies
-COPY external external/
+# Copy project source
 COPY CMakeLists.txt .
 COPY src src/
 
