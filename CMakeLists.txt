@@ -8,9 +8,13 @@ include(CPack)
 set(CPACK_PROJECT_NAME ${PROJECT_NAME})
 set(CPACK_PROJECT_VERSION ${PROJECT_VERSION})
 
-add_executable(PiDroneFlightComputer ./src/main.cpp)
+file(GLOB_RECURSE SOURCES
+    src/*.h
+    src/*.cpp
+)
 
-# find_package(pigpio REQUIRED)
+add_executable(PiDroneFlightComputer ./src/main.cpp ${SOURCES})
+
 add_subdirectory(external/pigpio)
 target_include_directories(PiDroneFlightComputer INTERFACE pigpio)
 target_link_libraries(PiDroneFlightComputer pigpio)
