@@ -1,11 +1,7 @@
-#include <iostream>
-#include <pigpio.h>
-
-using namespace std;
+#include "iostream"
+#include "./core/PidController/PidController.h"
 
 int main() {
-    cout << "Hello World" << endl;
-    gpioInitialise();
-    gpioSetMode(1, PI_INPUT);
+    PidController pid = PidController();
     return 0;
 }
