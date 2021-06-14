@@ -5,7 +5,6 @@ PidController::PidController(PidControllerInput input) {
     this->ki = input.ki;
     this->kd = input.kd;
     this->sampleTime = input.sampleTime;
-    this->setpoint = input.setpoint;
     this->outputLimits = input.outputLimits;
     this->integratorLimits = input.integratorLimits;
     this->tau = input.tau;
@@ -17,9 +16,9 @@ PidController::PidController(PidControllerInput input) {
     this->output = 0;
 };
 
-float PidController::update(float measurment) {
+float PidController::update(float setpoint, float measurment) {
     // Calculate error
-    float error = this->setpoint - measurment;
+    float error = setpoint - measurment;
 
     // Calculate proportional term on error
     this->proportonal = this->kp * error;

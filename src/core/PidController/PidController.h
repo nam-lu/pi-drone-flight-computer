@@ -11,7 +11,6 @@ struct PidControllerInput {
         ki = 0,
         kd = 0,
         sampleTime = 0.01,
-        setpoint = 0,
         tau = 0;
     RangeLimits 
         outputLimits = {std::numeric_limits<float>::min(), std::numeric_limits<float>::max()},
@@ -21,14 +20,13 @@ struct PidControllerInput {
 class PidController {
     public:
         PidController(PidControllerInput input);
-        float update(float measurment);
+        float update(float setpoint, float measurment);
     private:
         float 
             kp,
             ki,
             kd,
             sampleTime,
-            setpoint,
             tau,
             proportonal,
             integrator,
