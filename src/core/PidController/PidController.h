@@ -4,15 +4,15 @@ struct OutputLimits {
     signed int low, high;
 };
 
+struct PidControllerInput {
+    float kp = 1, ki = 0, kd = 0;
+    signed int setpoint = 0;
+    OutputLimits outputLimits = {-1000000, 1000000};
+};
+
 class PidController {
     public:
-        PidController(
-            float kp = 1,
-            float ki = 0,
-            float kd = 0,
-            signed int setpoint = 0,
-            OutputLimits outputLimits = {-1000000, 1000000}
-        );
+        PidController(PidControllerInput input);
     private:
         float kp;
         float ki;

@@ -2,6 +2,7 @@
 #include "./core/PidController/PidController.h"
 
 int main() {
-    PidController pid = PidController();
+    PidControllerInput input = {};
+    PidController pid = PidController(input);
     return 0;
 }
