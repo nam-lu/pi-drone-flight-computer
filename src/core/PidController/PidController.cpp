@@ -14,9 +14,15 @@ PidController::PidController(PidControllerInput input) {
     this->previousError = 0;
     this->previousMeasurement = 0;
     this->output = 0;
+    this->lastSampleTime = std::chrono::system_clock::now();
 };
 
 float PidController::update(float setpoint, float measurment) {
+    std::chrono::duration<double> elapsedSecondsSinceLastSample = std::chrono::system_clock::now() - lastSampleTime;
+    if (elapsedSecondsSinceLastSample.count() < this->sampleTime) {
+        return this->output;
+    }
+
     // Calculate error
     float error = setpoint - measurment;
 
@@ -50,6 +56,9 @@ float PidController::update(float setpoint, float measurment) {
     // Keep track on previous values
     this->previousError = error;
     this->previousMeasurement = measurment;
+
+    // Keep track of last sample time
+    this->lastSampleTime = std::chrono::system_clock::now();
 
     return this->output;
 };

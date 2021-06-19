@@ -1,5 +1,8 @@
 #pragma once
 #include "limits"
+#include "chrono"
+
+using chronoTimePoint = std::chrono::_V2::system_clock::time_point;
 
 struct RangeLimits {
     float min, max;
@@ -34,6 +37,7 @@ class PidController {
             previousError,
             previousMeasurement,
             output;
+        chronoTimePoint lastSampleTime;
         RangeLimits
             outputLimits, 
             integratorLimits;
