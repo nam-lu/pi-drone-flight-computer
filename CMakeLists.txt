@@ -15,6 +15,5 @@ file(GLOB_RECURSE SOURCES
 
 add_executable(PiDroneFlightComputer ./src/main.cpp ${SOURCES})
 
-add_subdirectory(external/pigpio)
 target_include_directories(PiDroneFlightComputer INTERFACE pigpio)
 target_link_libraries(PiDroneFlightComputer pigpio)
