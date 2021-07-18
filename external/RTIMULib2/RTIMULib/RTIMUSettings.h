@@ -78,6 +78,21 @@
 #define RTIMULIB_GD20HM303D_COMPASS_FSR       "GD20HM303DCompassFsr"
 
 
+//  LSM6DS33LIS3MDL defaults
+
+#define RTIMULIB_LSM6DS33LIS3MDL_GYRO_SAMPLERATE  "LSM6DS33LIS3MDLGyroSampleRate"
+#define RTIMULIB_LSM6DS33LIS3MDL_GYRO_HPF         "LSM6DS33LIS3MDLGyroHpf"
+#define RTIMULIB_LSM6DS33LIS3MDL_GYRO_FSR         "LSM6DS33LIS3MDLGyroFsr"
+
+#define RTIMULIB_LSM6DS33LIS3MDL_ACCEL_SAMPLERATE "LSM6DS33LIS3MDLAccelSampleRate"
+#define RTIMULIB_LSM6DS33LIS3MDL_ACCEL_HPF          "LSM6DS33LIS3MDLAccelHpf"
+#define RTIMULIB_LSM6DS33LIS3MDL_ACCEL_FSR        "LSM6DS33LIS3MDLAccelFsr"
+#define RTIMULIB_LSM6DS33LIS3MDL_ACCEL_LPF        "LSM6DS33LIS3MDLAccelLpf"
+
+#define RTIMULIB_LSM6DS33LIS3MDL_COMPASS_SAMPLERATE  "LSM6DS33LIS3MDLCompassSampleRate"
+#define RTIMULIB_LSM6DS33LIS3MDL_COMPASS_FSR         "LSM6DS33LIS3MDLCompassFsr"
+
+
 //  GD20M303DLHC settings keys
 
 #define RTIMULIB_GD20M303DLHC_GYRO_SAMPLERATE   "GD20M303DLHCGyroSampleRate"
@@ -286,6 +301,20 @@ public:
 
     int m_GD20HM303DCompassSampleRate;                      // the compass sample rate
     int m_GD20HM303DCompassFsr;                             // the compass full scale range
+
+    //  LSM6DS33LIS3MDL defaults
+
+    int m_LSM6DS33LIS3MDLGyroSampleRate;                     // the gyro sample rate
+    int m_LSM6DS33LIS3MDLGyroHpf;                            // the gyro high pass filter cutoff code
+    int m_LSM6DS33LIS3MDLGyroFsr;                            // the gyro full scale range
+
+    int m_LSM6DS33LIS3MDLAccelSampleRate;                    // the accel sample rate
+    int m_LSM6DS33LIS3MDLAccelHpf;                           // the accel high pass filter cutoff code
+    int m_LSM6DS33LIS3MDLAccelFsr;                           // the accel full scale range
+    int m_LSM6DS33LIS3MDLAccelLpf;                           // the accel low pass filter
+
+    int m_LSM6DS33LIS3MDLCompassSampleRate;                  // the compass sample rate
+    int m_LSM6DS33LIS3MDLCompassFsr;                         // the compass full scale range
 
     //  GD20M303DLHC
 

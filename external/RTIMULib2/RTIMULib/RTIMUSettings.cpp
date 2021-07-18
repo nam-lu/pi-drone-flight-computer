@@ -29,6 +29,7 @@
 #include "IMUDrivers/RTIMUMPU9150.h"
 #include "IMUDrivers/RTIMUMPU9250.h"
 #include "IMUDrivers/RTIMUGD20HM303D.h"
+#include "IMUDrivers/RTIMULSM6DS33LIS3MDL.h"
 #include "IMUDrivers/RTIMUGD20M303DLHC.h"
 #include "IMUDrivers/RTIMUGD20HM303DLHC.h"
 #include "IMUDrivers/RTIMULSM9DS0.h"
@@ -40,6 +41,8 @@
 
 #include "IMUDrivers/RTHumidityHTS221.h"
 #include "IMUDrivers/RTHumidityHTU21D.h"
+
+#include <iostream>
 
 #define RATE_TIMER_INTERVAL 2
 
@@ -281,6 +284,57 @@ bool RTIMUSettings::discoverIMU(int& imuType, bool& busIsI2C, unsigned char& sla
             }
         }
 
+
+        if (HALRead(LSM6DS33_ADDRESS0, LSM6DS33_WHO_AM_I, 1, &result, "")) {
+            if (result == LSM6DS33_ID) {
+                if (HALRead(LIS3MDL_ADDRESS0, LIS3MDL_WHO_AM_I, 1, &altResult, "")) {
+                    if (altResult == LIS3MDL_ID) {
+                        imuType = RTIMU_TYPE_LSM6DS33LIS3MDL;
+                        slaveAddress = LSM6DS33_ADDRESS0;
+                        busIsI2C = true;
+                        HAL_INFO("Detected LSM6DS33/LIS3MDL at standard/standard address\n");
+                        return true;
+                    }
+                }
+                if (HALRead(LIS3MDL_ADDRESS1, LIS3MDL_WHO_AM_I, 1, &altResult, "")) {
+                    if (altResult == LIS3MDL_ID) {
+                        imuType = RTIMU_TYPE_LSM6DS33LIS3MDL;
+                        slaveAddress = LSM6DS33_ADDRESS0;
+                        busIsI2C = true;
+                        HAL_INFO("Detected LSM6DS33/LIS3MDL at standard/option address\n");
+                        return true;
+                    }
+                }
+            } 
+        }
+
+        if (HALRead(LSM6DS33_ADDRESS1, LSM6DS33_WHO_AM_I, 1, &result, "")) {
+            if (result == LSM6DS33_ID) {
+                if (HALRead(LIS3MDL_ADDRESS1, LIS3MDL_WHO_AM_I, 1, &altResult, "")) {
+                    if (altResult == LIS3MDL_ID) {
+                        imuType = RTIMU_TYPE_LSM6DS33LIS3MDL;
+                        slaveAddress = LSM6DS33_ADDRESS1;
+                        busIsI2C = true;
+                        HAL_INFO("Detected LSM6DS33/LIS3MDL at option/option address\n");
+                        std::cout << "FOUND IMU LSM6DS33 and Result was " << static_cast<unsigned>(result) << " alt result was " << static_cast<unsigned>(altResult) << std::endl; 
+                        return true;
+                    }
+                }
+                if (HALRead(LIS3MDL_ADDRESS0, LIS3MDL_WHO_AM_I, 1, &altResult, "")) {
+                    if (altResult == LIS3MDL_ID) {
+                        imuType = RTIMU_TYPE_LSM6DS33LIS3MDL;
+                        slaveAddress = LSM6DS33_ADDRESS1;
+                        busIsI2C = true;
+                        HAL_INFO("Detected LSM6DS33/LIS3MDL at option/standard address\n");
+                        std::cout << "FOUND IMU LIS3MDL and Result was " << static_cast<unsigned>(altResult) << std::endl; 
+                        return true;
+                    }
+                }
+            }
+        }
+
+
+
         if (HALRead(L3GD20_ADDRESS0, L3GD20_WHO_AM_I, 1, &result, "")) {
             if (result == L3GD20_ID) {
                 imuType = RTIMU_TYPE_GD20M303DLHC;
@@ -338,15 +392,6 @@ bool RTIMUSettings::discoverIMU(int& imuType, bool& busIsI2C, unsigned char& sla
                 return true;
             }
         }
-	if (HALRead(HMC5883_ADDRESS, HMC5883L_WHO_AM_I, 1, &result, "")) {
-	    if (result == HMC5883L_ID) {
-		imuType = RTIMU_TYPE_HMC5883LADXL345;
-		slaveAddress = HMC5883_ADDRESS;
-		busIsI2C = true;
-		HAL_INFO("Detected HMC5883L at standard address\n");
-		return true;
-	    }
-	}
         HALClose();
     }
 
@@ -525,7 +570,6 @@ void RTIMUSettings::setDefaults()
     //  GD20HM303D defaults
 
     m_GD20HM303DGyroSampleRate = L3GD20H_SAMPLERATE_50;
-    m_GD20HM303DGyroBW = L3GD20H_BANDWIDTH_1;
     m_GD20HM303DGyroHpf = L3GD20H_HPF_4;
     m_GD20HM303DGyroFsr = L3GD20H_FSR_500;
 
@@ -535,6 +579,21 @@ void RTIMUSettings::setDefaults()
 
     m_GD20HM303DCompassSampleRate = LSM303D_COMPASS_SAMPLERATE_50;
     m_GD20HM303DCompassFsr = LSM303D_COMPASS_FSR_2;
+
+
+    //  LSM6DS33LIS3MDL defaults
+
+    m_LSM6DS33LIS3MDLGyroSampleRate = LSM6DS33_SAMPLERATE_1660;
+    m_LSM6DS33LIS3MDLGyroHpf = LSM6DS33_HPF_0;
+    m_LSM6DS33LIS3MDLGyroFsr = LSM6DS33_FSR_2000;
+
+    m_LSM6DS33LIS3MDLAccelSampleRate = LSM6DS33_ACCEL_SAMPLERATE_6660;
+    m_LSM6DS33LIS3MDLAccelHpf = LSM6DS33_ACCEL_HPF_0;
+    m_LSM6DS33LIS3MDLAccelFsr = LSM6DS33_ACCEL_FSR_16;
+    m_LSM6DS33LIS3MDLAccelLpf = LSM6DS33_ACCEL_LPF_50;
+
+    m_LSM6DS33LIS3MDLCompassSampleRate = LIS3MDL_COMPASS_SAMPLERATE_80;
+    m_LSM6DS33LIS3MDLCompassFsr = LIS3MDL_COMPASS_FSR_4;
 
     //  GD20M303DLHC defaults
 
@@ -810,6 +869,28 @@ bool RTIMUSettings::loadSettings()
         } else if (strcmp(key, RTIMULIB_GD20HM303D_COMPASS_FSR) == 0) {
             m_GD20HM303DCompassFsr = atoi(val);
 
+
+        //  LSM6DS33LIS3MDL settings
+
+        } else if (strcmp(key, RTIMULIB_LSM6DS33LIS3MDL_GYRO_SAMPLERATE) == 0) {
+            m_LSM6DS33LIS3MDLGyroSampleRate = atoi(val);
+        } else if (strcmp(key, RTIMULIB_LSM6DS33LIS3MDL_GYRO_FSR) == 0) {
+            m_LSM6DS33LIS3MDLGyroFsr = atoi(val);
+        } else if (strcmp(key, RTIMULIB_LSM6DS33LIS3MDL_GYRO_HPF) == 0) {
+            m_LSM6DS33LIS3MDLGyroHpf = atoi(val);
+        } else if (strcmp(key, RTIMULIB_LSM6DS33LIS3MDL_ACCEL_HPF) == 0) {
+            m_LSM6DS33LIS3MDLAccelHpf = atoi(val);
+        } else if (strcmp(key, RTIMULIB_LSM6DS33LIS3MDL_ACCEL_SAMPLERATE) == 0) {
+            m_LSM6DS33LIS3MDLAccelSampleRate = atoi(val);
+        } else if (strcmp(key, RTIMULIB_LSM6DS33LIS3MDL_ACCEL_FSR) == 0) {
+            m_LSM6DS33LIS3MDLAccelFsr = atoi(val);
+        } else if (strcmp(key, RTIMULIB_LSM6DS33LIS3MDL_ACCEL_LPF) == 0) {
+            m_LSM6DS33LIS3MDLAccelLpf = atoi(val);
+        } else if (strcmp(key, RTIMULIB_LSM6DS33LIS3MDL_COMPASS_SAMPLERATE) == 0) {
+            m_LSM6DS33LIS3MDLCompassSampleRate = atoi(val);
+        } else if (strcmp(key, RTIMULIB_LSM6DS33LIS3MDL_COMPASS_FSR) == 0) {
+            m_LSM6DS33LIS3MDLCompassFsr = atoi(val);
+
         //  GD20M303DLHC settings
 
         } else if (strcmp(key, RTIMULIB_GD20M303DLHC_GYRO_SAMPLERATE) == 0) {
@@ -943,7 +1024,7 @@ bool RTIMUSettings::saveSettings()
     setComment("  8 = STM L3GD20H + LSM303DLHC");
     setComment("  9 = Bosch BMX055");
     setComment("  10 = Bosch BNX055");
-    setComment("  11 = HMC5883L + ADXL345 + L3G4200D");
+    setComment("  11 = STM LSM6DS33 + LIS3MDL");
     setValue(RTIMULIB_IMU_TYPE, m_imuType);
 
     setBlank();
@@ -1700,6 +1781,108 @@ bool RTIMUSettings::saveSettings()
     setComment("  2 = Enhanced");
     setComment("  3 = High accuracy");
     setValue(RTIMULIB_BMX055_MAG_PRESET, m_BMX055MagPreset);
+
+
+    //  LSM6DS33 LIS3MDL settings
+
+    setBlank();
+    setComment("#####################################################################");
+    setComment("");
+    setComment("LSM6DS33 + LIS3MDL settings");
+
+    setBlank();
+    setComment("");
+    setComment("Gyro sample rate - ");
+    setComment("  0 = 0Hz ");
+    setComment("  1 = 13Hz ");
+    setComment("  2 = 26Hz ");
+    setComment("  3 = 52Hz ");
+    setComment("  4 = 104Hz ");
+    setComment("  5 = 208Hz ");
+    setComment("  6 = 416Hz ");
+    setComment("  7 = 833Hz ");
+    setComment("  8 = 1660Hz ");
+    setValue(RTIMULIB_LSM6DS33LIS3MDL_GYRO_SAMPLERATE, m_LSM6DS33LIS3MDLGyroSampleRate);
+
+    setBlank();
+    setComment("");
+    setComment("Gyro full scale range - ");
+    setComment("  0 = 125 degrees per second ");
+    setComment("  1 = 245 degrees per second ");
+    setComment("  2 = 500 degrees per second ");
+    setComment("  3 = 1000 degrees per second ");
+    setComment("  4 = 2000 degrees per second ");
+    setValue(RTIMULIB_LSM6DS33LIS3MDL_GYRO_FSR, m_LSM6DS33LIS3MDLGyroFsr);
+
+    setBlank();
+    setComment("");
+    setComment("Gyro high pass filter - ");
+    setComment("  0 - 9 but see the LSM6DS33 manual for details");
+    setValue(RTIMULIB_LSM6DS33LIS3MDL_GYRO_HPF, m_LSM6DS33LIS3MDLGyroHpf);
+
+
+    setBlank();
+    setComment("Accel sample rate - ");
+    setComment("  0 = 0Hz ");
+    setComment("  1 = 13Hz ");
+    setComment("  2 = 26Hz ");
+    setComment("  3 = 52Hz ");
+    setComment("  4 = 104Hz ");
+    setComment("  5 = 208Hz ");
+    setComment("  6 = 416Hz ");
+    setComment("  7 = 833Hz ");
+    setComment("  8 = 1660Hz ");
+    setComment("  9 = 3330Hz ");
+    setComment("  10 = 6660Hz ");
+    setValue(RTIMULIB_LSM6DS33LIS3MDL_ACCEL_SAMPLERATE, m_LSM6DS33LIS3MDLAccelSampleRate);
+
+    setBlank();
+    setComment("");
+    setComment("Accel full scale range - ");
+    setComment("  0 = +/- 2g ");
+    setComment("  1 = +/- 4g ");
+    setComment("  2 = +/- 8g ");
+    setComment("  3 = +/- 16g ");
+    setValue(RTIMULIB_LSM6DS33LIS3MDL_ACCEL_FSR, m_LSM6DS33LIS3MDLAccelFsr);
+
+    setBlank();
+    setComment("");
+    setComment("Accel high pass filter - ");
+    setComment("  0 = ODR_XL/50Hz");
+    setComment("  1 = ODR_XL/100Hz");
+    setComment("  2 = ODR_XL/9Hz");
+    setComment("  3 = ODR_XL/400Hz");
+    setValue(RTIMULIB_LSM6DS33LIS3MDL_ACCEL_HPF, m_LSM6DS33LIS3MDLAccelHpf);
+
+    setBlank();
+    setComment("");
+    setComment("Accel low pass filter - ");
+    setComment("  0 = 400Hz");
+    setComment("  1 = 200Hz");
+    setComment("  2 = 100Hz");
+    setComment("  3 = 50Hz");
+    setValue(RTIMULIB_LSM6DS33LIS3MDL_ACCEL_LPF, m_LSM6DS33LIS3MDLAccelLpf);
+
+    setBlank();
+    setComment("");
+    setComment("Compass sample rate - ");
+    setComment("  0 = 3.125Hz ");
+    setComment("  1 = 6.25Hz ");
+    setComment("  2 = 12.5Hz ");
+    setComment("  3 = 25Hz ");
+    setComment("  4 = 50Hz ");
+    setComment("  5 = 100Hz ");
+    setValue(RTIMULIB_LSM6DS33LIS3MDL_COMPASS_SAMPLERATE, m_LSM6DS33LIS3MDLCompassSampleRate);
+
+
+    setBlank();
+    setComment("");
+    setComment("Compass full scale range - ");
+    setComment("  0 = +/- 200 uT ");
+    setComment("  1 = +/- 400 uT ");
+    setComment("  2 = +/- 800 uT ");
+    setComment("  3 = +/- 1200 uT ");
+    setValue(RTIMULIB_LSM6DS33LIS3MDL_COMPASS_FSR, m_LSM6DS33LIS3MDLCompassFsr);
 
     fclose(m_fd);
     return true;

@@ -80,8 +80,7 @@ DEPS    = $(RTIMULIBPATH)/RTMath.h \
     $(RTIMULIBPATH)/IMUDrivers/RTPressureBMP180.h \
     $(RTIMULIBPATH)/IMUDrivers/RTPressureLPS25H.h \
     $(RTIMULIBPATH)/IMUDrivers/RTPressureMS5611.h \
-    $(RTIMULIBPATH)/IMUDrivers/RTPressureMS5637.h \
-    $(RTIMULIBPATH)/IMUDrivers/RTIMUHMC5883LADXL345.h
+    $(RTIMULIBPATH)/IMUDrivers/RTPressureMS5637.h 
 
 OBJECTS = objects/RTIMULibCal.o \
     objects/RTMath.o \
@@ -107,8 +106,7 @@ OBJECTS = objects/RTIMULibCal.o \
     objects/RTPressureBMP180.o \
     objects/RTPressureLPS25H.o \
     objects/RTPressureMS5611.o \
-    objects/RTPressureMS5637.o \
-    objects/RTIMUHMC5883LADXL345.o
+    objects/RTPressureMS5637.o 
 
 MAKE_TARGET	= RTIMULibCal
 DESTDIR		= Output/
