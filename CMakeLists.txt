@@ -15,5 +15,10 @@ file(GLOB_RECURSE SOURCES
 
 add_executable(PiDroneFlightComputer ./src/main.cpp ${SOURCES})
 
-target_include_directories(PiDroneFlightComputer INTERFACE pigpio)
+include_directories(/usr/include)
+include_directories(/usr/local/include)
+include_directories(${PROJECT_SOURCE_DIR}/external/pigpio)
+include_directories(${PROJECT_SOURCE_DIR}/external/RTIMULib2/RTIMULib)
+
 target_link_libraries(PiDroneFlightComputer pigpio)
+target_link_libraries(PiDroneFlightComputer /usr/local/lib/libRTIMULib.so)
